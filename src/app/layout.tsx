@@ -3,6 +3,7 @@ import { Inter } from 'next/font/google';
 import './globals.css';
 import { Toaster } from '@/components/ui/toaster';
 import MyProvider from '@/context/MyProvider';
+import MyQueryProvider from '@/context/MyQueryProvider';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -22,12 +23,14 @@ export default function RootLayout({
       <head>
         <link rel="icon" href="/credit-card.png" />
       </head>
-      <MyProvider>
-        <body className={inter.className}>
-          <main>{children}</main>
-          <Toaster />
-        </body>
-      </MyProvider>
+      <MyQueryProvider>
+        <MyProvider>
+          <body className={inter.className}>
+            <main>{children}</main>
+            <Toaster />
+          </body>
+        </MyProvider>
+      </MyQueryProvider>
     </html>
   );
 }
