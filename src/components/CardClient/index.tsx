@@ -14,7 +14,6 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { createClientSchema } from '@/validations/clientSchema';
 import { fieldsCreateClient } from '@/utils/fieldsData';
 import {
@@ -25,8 +24,12 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form';
+import { ResponseError } from '@/interfaces/errorInterface';
+import fetchData from '@/services/api';
+import useMyContext from '@/context/useMyContext';
 
 export function CardToCreateClient() {
+  const { setCurrentClientId } = useMyContext();
   const { toast } = useToast();
 
   const form = useForm<z.infer<typeof createClientSchema>>({
@@ -40,15 +43,34 @@ export function CardToCreateClient() {
     },
   });
 
-  function onSubmit(values: z.infer<typeof createClientSchema>) {
-    console.log(values);
+  async function onSubmit(values: z.infer<typeof createClientSchema>) {
+    try {
+      const res = await fetchData(`/clients`, 'POST', values);
 
-    toast({
-      title: 'Success',
-      description: 'Client Created Successful.',
-    });
+      if (!res.ok) {
+        toast({
+          title: 'Error',
+          description: 'Could not connect with API',
+        });
+      }
 
-    form.reset();
+      const data = await res.json();
+
+      toast({
+        title: 'Success',
+        description: 'Client Created Successful.',
+      });
+
+      form.reset();
+
+      setCurrentClientId(data.id);
+    } catch (err: unknown) {
+      const error = err as ResponseError;
+      toast({
+        title: 'Error',
+        description: error.message,
+      });
+    }
   }
 
   return (

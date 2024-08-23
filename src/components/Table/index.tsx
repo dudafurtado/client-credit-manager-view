@@ -12,15 +12,10 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import useMyContext from '@/context/useMyContext';
-import {
-  useQuery,
-  useMutation,
-  useQueryClient,
-  QueryClient,
-  QueryClientProvider,
-} from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import fetchData from '@/services/api';
 import { ResponseError } from '@/interfaces/errorInterface';
+import { Client } from '@/interfaces/clientInterface';
 
 export function TableDemo() {
   const [allData, setAllData] = useState<any[]>([]);
@@ -67,7 +62,6 @@ export function TableDemo() {
     const contentSearched: any[] = allData.filter((client) =>
       client.name.toLowerCase().includes(search.toLowerCase())
     );
-
     setClients(contentSearched);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [search]);

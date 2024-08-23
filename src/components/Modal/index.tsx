@@ -1,10 +1,11 @@
 import Image from 'next/image';
+import { useParams } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useQuery } from '@tanstack/react-query';
 import {
   AlertDialog,
-  AlertDialogAction,
   AlertDialogCancel,
   AlertDialogContent,
   AlertDialogDescription,
@@ -27,9 +28,13 @@ import { useToast } from '@/components/ui/use-toast';
 import CreditCardIcon from '@/assets/credit-card.png';
 import { cardSchema } from '@/validations/cardSchema';
 import { fieldsCard } from '@/utils/fieldsData';
+import { ResponseError } from '@/interfaces/errorInterface';
+import fetchData from '@/services/api';
 
 export function Modal() {
+  const params = useParams();
   const { toast } = useToast();
+
   const form = useForm<z.infer<typeof cardSchema>>({
     resolver: zodResolver(cardSchema),
     defaultValues: {
@@ -39,13 +44,28 @@ export function Modal() {
     },
   });
 
-  function onSubmit(values: z.infer<typeof cardSchema>) {
-    console.log(values);
+  async function onSubmit(values: z.infer<typeof cardSchema>) {
+    try {
+      const res = await fetchData(`/cards`, 'POST', { ...values, client_id: params.id });
 
-    toast({
-      title: 'Success',
-      description: 'Create Card Successful.',
-    });
+      if (!res.ok) {
+        toast({
+          title: 'Error',
+          description: 'Could not connect with API',
+        });
+      }
+
+      toast({
+        title: 'Success',
+        description: 'Create Card Successful.',
+      });
+    } catch (err: unknown) {
+      const error = err as ResponseError;
+      toast({
+        title: 'Error',
+        description: error.message,
+      });
+    }
   }
 
   return (
@@ -56,7 +76,7 @@ export function Modal() {
           alt="Icone de um cartão de crédito"
           width={40}
           height={40}
-          className="cursor-pointer"
+          className="cursor-pointer self-center"
         />
       </AlertDialogTrigger>
       <AlertDialogContent>

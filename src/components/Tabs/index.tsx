@@ -26,8 +26,12 @@ import {
 import { cardSchema } from '@/validations/cardSchema';
 import { fieldsAddress, fieldsCard } from '@/utils/fieldsData';
 import { addressSchema } from '@/validations/adressSchema';
+import useMyContext from '@/context/useMyContext';
+import fetchData from '@/services/api';
+import { ResponseError } from '@/interfaces/errorInterface';
 
 export function TabsDemo() {
+  const { currentClientId, setCurrentClientId } = useMyContext();
   const { toast } = useToast();
 
   const cardForm = useForm<z.infer<typeof cardSchema>>({
@@ -51,26 +55,62 @@ export function TabsDemo() {
     },
   });
 
-  function onSubmitCard(values: z.infer<typeof cardSchema>) {
-    console.log(values);
+  async function onSubmitCard(values: z.infer<typeof cardSchema>) {
+    try {
+      const res = await fetchData(`/cards`, 'POST', {
+        ...values,
+        client_id: currentClientId,
+      });
 
-    toast({
-      title: 'Success',
-      description: 'Card Created Successful.',
-    });
+      if (!res.ok) {
+        toast({
+          title: 'Error',
+          description: 'Could not connect with API',
+        });
+      }
 
-    cardForm.reset();
+      toast({
+        title: 'Success',
+        description: 'Card Created Successful.',
+      });
+
+      cardForm.reset();
+    } catch (err: unknown) {
+      const error = err as ResponseError;
+      toast({
+        title: 'Error',
+        description: error.message,
+      });
+    }
   }
 
-  function onSubmitAddress(values: z.infer<typeof addressSchema>) {
-    console.log(values);
+  async function onSubmitAddress(values: z.infer<typeof addressSchema>) {
+    try {
+      const res = await fetchData(`/addresses`, 'POST', {
+        ...values,
+        client_id: currentClientId,
+      });
 
-    toast({
-      title: 'Success',
-      description: 'Address Created Successful.',
-    });
+      if (!res.ok) {
+        toast({
+          title: 'Error',
+          description: 'Could not connect with API',
+        });
+      }
 
-    addressForm.reset();
+      toast({
+        title: 'Success',
+        description: 'Address Created Successful.',
+      });
+
+      addressForm.reset();
+    } catch (err: unknown) {
+      const error = err as ResponseError;
+      toast({
+        title: 'Error',
+        description: error.message,
+      });
+    }
   }
 
   return (
