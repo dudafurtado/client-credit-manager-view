@@ -1,3 +1,4 @@
+'use client';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { useToast } from '@/components/ui/use-toast';
@@ -11,10 +12,15 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import useMyContext from '@/context/useMyContext';
-
-export interface ResponseError extends Error {
-  message: string;
-}
+import {
+  useQuery,
+  useMutation,
+  useQueryClient,
+  QueryClient,
+  QueryClientProvider,
+} from '@tanstack/react-query';
+import fetchData from '@/services/api';
+import { ResponseError } from '@/interfaces/errorInterface';
 
 export function TableDemo() {
   const [allData, setAllData] = useState<any[]>([]);
@@ -23,48 +29,22 @@ export function TableDemo() {
   const { toast } = useToast();
   const router = useRouter();
 
-  const data = [
-    {
-      id: 1,
-      name: 'Maria Eduarda',
-      email: 'mariaeduarda@email.com',
-      birth_date: '20/05/2003',
-      phone: '(71) 999516225',
-    },
-    {
-      id: 2,
-      name: 'Mauricio Alves',
-      email: 'ma@email.com',
-      birth_date: '20/05/2003',
-      phone: '(71) 999516225',
-    },
-    {
-      id: 3,
-      name: 'Jorge Junior',
-      email: 'jorge@email.com',
-      birth_date: '20/05/2003',
-      phone: '(71) 999516225',
-    },
-    {
-      id: 4,
-      name: 'Carla Borges',
-      email: 'carla@email.com',
-      birth_date: '20/05/2003',
-      phone: '(71) 999516225',
-    },
-  ];
-
-  function handleShowClient(clientId: number) {
-    console.log(clientId);
-
-    router.push(`/client/${clientId}`);
-  }
-
   useEffect(() => {
     async function loadClients() {
       try {
-        // setAllData(data);
-        // setClients(data);
+        const res = await fetchData('/clients', 'GET');
+
+        if (!res.ok) {
+          toast({
+            title: 'Error',
+            description: 'Problema ao acessar a aplicação',
+          });
+        }
+
+        const { data } = await res.json();
+
+        setAllData(data);
+        setClients(data);
 
         toast({
           title: 'Success',
@@ -104,10 +84,10 @@ export function TableDemo() {
         </TableRow>
       </TableHeader>
       <TableBody>
-        {data.map((client) => (
+        {clients.map((client) => (
           <TableRow
             key={client.id}
-            onClick={() => handleShowClient(client.id)}
+            onClick={() => router.push(`/client/${client.id}`)}
             className="cursor-pointer"
           >
             <TableCell className="font-medium">{client.name}</TableCell>

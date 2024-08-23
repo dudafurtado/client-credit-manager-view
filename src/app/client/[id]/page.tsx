@@ -1,40 +1,50 @@
 'use client';
+import { useParams } from 'next/navigation';
+import { useEffect, useState } from 'react';
+import { useToast } from '@/components/ui/use-toast';
 import { BreadcrumbDemo } from '@/components/Breadcrumb';
 import { Modal } from '@/components/Modal';
-import { useParams, useRouter } from 'next/navigation';
+import fetchData from '@/services/api';
+import { ResponseError } from '@/interfaces/errorInterface';
+import { Card, Client } from '@/interfaces/clientInterface';
+import { clientObject } from '@/utils/clientObject';
 
 export default function ShowClient() {
+  const [client, setClient] = useState<Client>(clientObject);
   const params = useParams();
-  const router = useRouter();
+  const { toast } = useToast();
 
-  console.log(params.id);
+  useEffect(() => {
+    async function loadClient() {
+      try {
+        const res = await fetchData(`/clients/${params.id}`, 'GET');
+        if (!res.ok) {
+          toast({
+            title: 'Error',
+            description: 'Problema ao acessar a aplicação',
+          });
+        }
 
-  const client = {
-    id: 1,
-    name: 'Maria Eduarda',
-    surname: 'Cerqueira Furtado Melo',
-    email: 'mariaeduarda@email.com',
-    birth_date: '20/05/2003',
-    phone: '(71) 999516225',
-    address: {
-      zip_code: '40080-003',
-      street: 'Avenida Sete de Setembro',
-      additional_information: 'de 2377 a 2631 - lado ímpar',
-      neighborhood: 'Vitória',
-      city: 'Salvador',
-      state: 'BA',
-      client_id: 2,
-    },
-    cards: [
-      {
-        id: 1,
-        number: '5573 2662 2502 9811',
-        expire_date: '12/25',
-        CVV: '123',
-        client_id: 2,
-      },
-    ],
-  };
+        const data = await res.json();
+
+        setClient(data);
+
+        toast({
+          title: 'Success',
+          description: 'Show Client Successful.',
+        });
+      } catch (err: unknown) {
+        const error = err as ResponseError;
+        toast({
+          title: 'Error',
+          description: error.message,
+        });
+      }
+    }
+
+    loadClient();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <>
@@ -102,25 +112,23 @@ export default function ShowClient() {
             </div>
           </section>
           <section className="flex flex-col gap-4">
-            {client.cards.map((card) => (
-              <>
-                <div key={card.id}>
+            {client.cards.map((card: Card) => (
+              <section key={card.id}>
+                <div>
                   <h1 className="text-xl font-semibold">Número do Cartão</h1>
                   <span className="text-base text-muted-foreground">{card.number}</span>
                 </div>
                 <div>
                   <h2 className="text-xl font-semibold">Data de expiração</h2>
                   <span className="text-base text-muted-foreground">
-                    {client.cards[0].expire_date}
+                    {card.expire_date}
                   </span>
                 </div>
                 <div>
                   <h2 className="text-xl font-semibold">CVV</h2>
-                  <span className="text-base text-muted-foreground">
-                    {client.cards[0].CVV}
-                  </span>
+                  <span className="text-base text-muted-foreground">{card.CVV}</span>
                 </div>
-              </>
+              </section>
             ))}
             <Modal />
           </section>
