@@ -9,7 +9,6 @@ export default function NewClient() {
   const { currentClientId, setCurrentClientId } = useMyContext();
 
   useEffect(() => {
-    console.log(currentClientId);
     setCurrentClientId(0);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);

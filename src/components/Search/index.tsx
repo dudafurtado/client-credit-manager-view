@@ -27,13 +27,7 @@ export function InputWithButton() {
   });
 
   function onSubmit(values: z.infer<typeof searchSchema>) {
-    console.log(values);
     setSearch(values.search);
-
-    toast({
-      title: 'Success',
-      description: 'Client Created Successful.',
-    });
   }
 
   return (
