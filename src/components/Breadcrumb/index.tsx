@@ -1,20 +1,17 @@
 import {
   Breadcrumb,
-  BreadcrumbEllipsis,
   BreadcrumbItem,
   BreadcrumbLink,
   BreadcrumbList,
-  BreadcrumbPage,
   BreadcrumbSeparator,
 } from '@/components/ui/breadcrumb';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
 
-export function BreadcrumbDemo() {
+interface Breadcrumb {
+  url: string;
+  title: string;
+}
+
+export function BreadcrumbDemo({ url, title }: Breadcrumb) {
   return (
     <Breadcrumb>
       <BreadcrumbList>
@@ -23,7 +20,7 @@ export function BreadcrumbDemo() {
         </BreadcrumbItem>
         <BreadcrumbSeparator />
         <BreadcrumbItem>
-          <BreadcrumbLink href="/client">Cliente</BreadcrumbLink>
+          <BreadcrumbLink href={url}>{title}</BreadcrumbLink>
         </BreadcrumbItem>
       </BreadcrumbList>
     </Breadcrumb>

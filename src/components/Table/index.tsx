@@ -1,3 +1,4 @@
+import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { useToast } from '@/components/ui/use-toast';
 import {
@@ -20,43 +21,50 @@ export function TableDemo() {
   const [clients, setClients] = useState<any[]>([]);
   const { search } = useMyContext();
   const { toast } = useToast();
+  const router = useRouter();
+
+  const data = [
+    {
+      id: 1,
+      name: 'Maria Eduarda',
+      email: 'mariaeduarda@email.com',
+      birth_date: '20/05/2003',
+      phone: '(71) 999516225',
+    },
+    {
+      id: 2,
+      name: 'Mauricio Alves',
+      email: 'ma@email.com',
+      birth_date: '20/05/2003',
+      phone: '(71) 999516225',
+    },
+    {
+      id: 3,
+      name: 'Jorge Junior',
+      email: 'jorge@email.com',
+      birth_date: '20/05/2003',
+      phone: '(71) 999516225',
+    },
+    {
+      id: 4,
+      name: 'Carla Borges',
+      email: 'carla@email.com',
+      birth_date: '20/05/2003',
+      phone: '(71) 999516225',
+    },
+  ];
+
+  function handleShowClient(clientId: number) {
+    console.log(clientId);
+
+    router.push(`/client/${clientId}`);
+  }
 
   useEffect(() => {
     async function loadClients() {
       try {
-        const data = [
-          {
-            id: 1,
-            name: 'Maria Eduarda',
-            email: 'mariaeduarda@email.com',
-            birth_date: '20/05/2003',
-            phone: '(71) 999516225',
-          },
-          {
-            id: 2,
-            name: 'Mauricio Alves',
-            email: 'ma@email.com',
-            birth_date: '20/05/2003',
-            phone: '(71) 999516225',
-          },
-          {
-            id: 3,
-            name: 'Jorge Junior',
-            email: 'jorge@email.com',
-            birth_date: '20/05/2003',
-            phone: '(71) 999516225',
-          },
-          {
-            id: 4,
-            name: 'Carla Borges',
-            email: 'carla@email.com',
-            birth_date: '20/05/2003',
-            phone: '(71) 999516225',
-          },
-        ];
-
-        setAllData(data);
-        setClients(data);
+        // setAllData(data);
+        // setClients(data);
 
         toast({
           title: 'Success',
@@ -89,15 +97,19 @@ export function TableDemo() {
       <TableCaption>Listagem dos seus clientes.</TableCaption>
       <TableHeader>
         <TableRow>
-          <TableHead className="w-[100px]">Nome</TableHead>
+          <TableHead>Nome</TableHead>
           <TableHead>Email</TableHead>
           <TableHead>Data de nascimento</TableHead>
           <TableHead className="text-right">Telefone</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
-        {clients.map((client) => (
-          <TableRow key={client.id}>
+        {data.map((client) => (
+          <TableRow
+            key={client.id}
+            onClick={() => handleShowClient(client.id)}
+            className="cursor-pointer"
+          >
             <TableCell className="font-medium">{client.name}</TableCell>
             <TableCell>{client.email}</TableCell>
             <TableCell>{client.birth_date}</TableCell>
