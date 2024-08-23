@@ -91,3 +91,10 @@ Abra [http://localhost:3000](http://localhost:3000) no seu navegador para ver o 
 A maneira mais fácil de fazer o deploy do seu aplicativo Next.js é usar a [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) dos criadores do Next.js.
 
 Confira nossa [documentação de deploy do Next.js](https://nextjs.org/docs/deployment) para mais detalhes.
+
+#### Referências
+
+<https://tanstack.com/query/latest/docs/framework/react/quick-start>
+<https://community.revelo.com.br/react-query-um-guia-pratico/>
+<https://medium.com/@amandaduuaarte/explorando-o-react-query-simplificando-requisi%C3%A7%C3%B5es-ass%C3%ADncronas-no-react-f75637c290e2>
+<https://www.youtube.com/watch?v=M_-XsI0jRAs>
