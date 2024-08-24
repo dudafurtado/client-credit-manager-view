@@ -15,10 +15,13 @@ import {
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/components/ui/use-toast';
 import { loginSchema } from '@/validations/adminSchema';
+import { fetchData } from '@/services/fetchData';
+import useMyContext from '@/context/useMyContext';
 
 export function ProfileForm() {
   const router = useRouter();
   const { toast } = useToast();
+  const { setToken } = useMyContext();
 
   const form = useForm<z.infer<typeof loginSchema>>({
     resolver: zodResolver(loginSchema),
@@ -28,15 +31,22 @@ export function ProfileForm() {
     },
   });
 
-  function onSubmit(values: z.infer<typeof loginSchema>) {
-    console.log(values);
+  async function onSubmit(values: z.infer<typeof loginSchema>) {
+    const { ok, message, data } = await fetchData(
+      'auth',
+      '/login',
+      'POST',
+      'Login Efetuado Com Sucesso',
+      values
+    );
 
-    toast({
-      title: 'Success',
-      description: 'Login Successful.',
-    });
+    if (ok) {
+      setToken(data.token);
+      toast(message);
+      router.push('/home');
+    }
 
-    router.push('/home');
+    return toast(message);
   }
 
   return (

@@ -24,12 +24,11 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form';
-import { ResponseError } from '@/interfaces/errorInterface';
-import fetchData from '@/services/api';
 import useMyContext from '@/context/useMyContext';
+import { fetchData } from '@/services/fetchData';
 
 export function CardToCreateClient() {
-  const { setCurrentClientId } = useMyContext();
+  const { setCurrentClientId, token } = useMyContext();
   const { toast } = useToast();
 
   const form = useForm<z.infer<typeof createClientSchema>>({
@@ -44,33 +43,22 @@ export function CardToCreateClient() {
   });
 
   async function onSubmit(values: z.infer<typeof createClientSchema>) {
-    try {
-      const res = await fetchData(`/clients`, 'POST', values);
+    const { ok, message, data } = await fetchData(
+      'api',
+      '/clients',
+      'POST',
+      'Cliente Criado Com Sucesso',
+      values,
+      token
+    );
 
-      if (!res.ok) {
-        toast({
-          title: 'Error',
-          description: 'Could not connect with API',
-        });
-      }
-
-      const data = await res.json();
-
-      toast({
-        title: 'Success',
-        description: 'Client Created Successful.',
-      });
-
-      form.reset();
-
+    if (ok) {
+      toast(message);
       setCurrentClientId(data.id);
-    } catch (err: unknown) {
-      const error = err as ResponseError;
-      toast({
-        title: 'Error',
-        description: error.message,
-      });
+      return form.reset();
     }
+
+    return toast(message);
   }
 
   return (

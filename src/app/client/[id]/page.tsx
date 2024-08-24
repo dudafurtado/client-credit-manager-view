@@ -6,69 +6,55 @@ import { useEffect, useState } from 'react';
 import { useToast } from '@/components/ui/use-toast';
 import { BreadcrumbDemo } from '@/components/Breadcrumb';
 import { Modal } from '@/components/Modal';
-import fetchData from '@/services/api';
-import { ResponseError } from '@/interfaces/errorInterface';
 import { Card, Client } from '@/interfaces/clientInterface';
 import { clientObject } from '@/utils/clientObject';
 import DeleteClientIcon from '@/assets/delete-client.png';
+import useMyContext from '@/context/useMyContext';
+import { fetchData } from '@/services/fetchData';
 
 export default function ShowClient() {
   const [client, setClient] = useState<Client>(clientObject);
   const router = useRouter();
   const params = useParams();
   const { toast } = useToast();
+  const { token } = useMyContext();
 
   async function handleDeleteClient() {
-    try {
-      const res = await fetchData(`/clients/${params.id}`, 'DELETE');
-      if (!res.ok) {
-        toast({
-          title: 'Error',
-          description: 'Problema ao acessar a aplicação',
-        });
-      }
+    const { ok, message } = await fetchData(
+      'api',
+      `/clients/${params.id}`,
+      'DELETE',
+      'Cliente Deletado Com Sucesso',
+      '',
+      token
+    );
 
-      toast({
-        title: 'Success',
-        description: 'Delete Client Successful.',
-      });
+    if (ok) {
+      toast(message);
 
-      router.push('/home');
-    } catch (err: unknown) {
-      const error = err as ResponseError;
-      toast({
-        title: 'Error',
-        description: error.message,
-      });
+      return router.push('/home');
     }
+
+    return toast(message);
   }
 
   useEffect(() => {
     async function loadClient() {
-      try {
-        const res = await fetchData(`/clients/${params.id}`, 'GET');
-        if (!res.ok) {
-          toast({
-            title: 'Error',
-            description: 'Problema ao acessar a aplicação',
-          });
-        }
+      const { ok, message, data } = await fetchData(
+        'api',
+        `/clients/${params.id}`,
+        'GET',
+        'Detalhamento do Cliente Com Sucesso',
+        '',
+        token
+      );
 
-        const data = await res.json();
-
+      if (ok) {
         setClient(data);
-
-        toast({
-          title: 'Success',
-          description: 'Show Client Successful.',
-        });
-      } catch (err: unknown) {
-        const error = err as ResponseError;
-        toast({
-          title: 'Error',
-          description: error.message,
-        });
+        return toast(message);
       }
+
+      return toast(message);
     }
 
     loadClient();

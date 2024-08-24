@@ -6,8 +6,8 @@ export default function EntrancePage() {
   const router = useRouter();
 
   useEffect(() => {
-    router.push('/home');
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    router.push('/new-account');
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return;

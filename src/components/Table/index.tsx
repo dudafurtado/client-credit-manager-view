@@ -12,46 +12,37 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import useMyContext from '@/context/useMyContext';
-import { useQuery } from '@tanstack/react-query';
-import fetchData from '@/services/api';
-import { ResponseError } from '@/interfaces/errorInterface';
+import { fetchData } from '@/services/fetchData';
 import { Client } from '@/interfaces/clientInterface';
 
 export function TableDemo() {
-  const [allData, setAllData] = useState<any[]>([]);
-  const [clients, setClients] = useState<any[]>([]);
-  const { search } = useMyContext();
+  const [allData, setAllData] = useState<Client[]>([]);
+  const [clients, setClients] = useState<Client[]>([]);
+  const { search, token } = useMyContext();
   const { toast } = useToast();
   const router = useRouter();
 
   useEffect(() => {
     async function loadClients() {
-      try {
-        const res = await fetchData('/clients', 'GET');
+      const { ok, message, data } = await fetchData(
+        'api',
+        '/clients',
+        'GET',
+        'Listagem de Clientes Com Sucesso',
+        '',
+        token
+      );
 
-        if (!res.ok) {
-          toast({
-            title: 'Error',
-            description: 'Problema ao acessar a aplicação',
-          });
-        }
+      console.log(data);
 
-        const { data } = await res.json();
+      if (ok) {
+        setAllData(data.data);
+        setClients(data.data);
 
-        setAllData(data);
-        setClients(data);
-
-        toast({
-          title: 'Success',
-          description: 'Clients List Successful.',
-        });
-      } catch (err: unknown) {
-        const error = err as ResponseError;
-        toast({
-          title: 'Error',
-          description: error.message,
-        });
+        return toast(message);
       }
+
+      return toast(message);
     }
 
     loadClients();
@@ -77,20 +68,22 @@ export function TableDemo() {
           <TableHead className="text-right">Telefone</TableHead>
         </TableRow>
       </TableHeader>
-      <TableBody>
-        {clients.map((client) => (
-          <TableRow
-            key={client.id}
-            onClick={() => router.push(`/client/${client.id}`)}
-            className="cursor-pointer"
-          >
-            <TableCell className="font-medium">{client.name}</TableCell>
-            <TableCell>{client.email}</TableCell>
-            <TableCell>{client.birth_date}</TableCell>
-            <TableCell className="text-right">{client.phone}</TableCell>
-          </TableRow>
-        ))}
-      </TableBody>
+      {clients && (
+        <TableBody>
+          {clients.map((client) => (
+            <TableRow
+              key={client.id}
+              onClick={() => router.push(`/client/${client.id}`)}
+              className="cursor-pointer"
+            >
+              <TableCell className="font-medium">{client.name}</TableCell>
+              <TableCell>{client.email}</TableCell>
+              <TableCell>{client.birth_date}</TableCell>
+              <TableCell className="text-right">{client.phone}</TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      )}
     </Table>
   );
 }

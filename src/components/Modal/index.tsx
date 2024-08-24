@@ -3,7 +3,6 @@ import { useParams } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useQuery } from '@tanstack/react-query';
 import {
   AlertDialog,
   AlertDialogCancel,
@@ -28,12 +27,13 @@ import { useToast } from '@/components/ui/use-toast';
 import CreditCardIcon from '@/assets/credit-card.png';
 import { cardSchema } from '@/validations/cardSchema';
 import { fieldsCard } from '@/utils/fieldsData';
-import { ResponseError } from '@/interfaces/errorInterface';
-import fetchData from '@/services/api';
+import { fetchData } from '@/services/fetchData';
+import useMyContext from '@/context/useMyContext';
 
 export function Modal() {
   const params = useParams();
   const { toast } = useToast();
+  const { token } = useMyContext();
 
   const form = useForm<z.infer<typeof cardSchema>>({
     resolver: zodResolver(cardSchema),
@@ -45,27 +45,20 @@ export function Modal() {
   });
 
   async function onSubmit(values: z.infer<typeof cardSchema>) {
-    try {
-      const res = await fetchData(`/cards`, 'POST', { ...values, client_id: params.id });
+    const { ok, message } = await fetchData(
+      'api',
+      '/cards',
+      'POST',
+      'Cartão Criado Com Sucesso',
+      { ...values, client_id: params.id },
+      token
+    );
 
-      if (!res.ok) {
-        toast({
-          title: 'Error',
-          description: 'Could not connect with API',
-        });
-      }
-
-      toast({
-        title: 'Success',
-        description: 'Create Card Successful.',
-      });
-    } catch (err: unknown) {
-      const error = err as ResponseError;
-      toast({
-        title: 'Error',
-        description: error.message,
-      });
+    if (ok) {
+      return toast(message);
     }
+
+    return toast(message);
   }
 
   return (

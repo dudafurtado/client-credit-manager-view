@@ -12,7 +12,6 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import {
   Form,
   FormControl,
@@ -26,10 +25,13 @@ import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { registerSchema } from '@/validations/adminSchema';
 import { fieldsRegister } from '@/utils/fieldsData';
+import { fetchData } from '@/services/fetchData';
+import useMyContext from '@/context/useMyContext';
 
 export function CardToRegisterAdmin() {
   const router = useRouter();
   const { toast } = useToast();
+  const { token } = useMyContext();
 
   const form = useForm<z.infer<typeof registerSchema>>({
     resolver: zodResolver(registerSchema),
@@ -40,15 +42,22 @@ export function CardToRegisterAdmin() {
     },
   });
 
-  function onSubmit(values: z.infer<typeof registerSchema>) {
-    console.log(values);
+  async function onSubmit(values: z.infer<typeof registerSchema>) {
+    const { ok, message } = await fetchData(
+      'auth',
+      '/users',
+      'POST',
+      'Administrador Criado Com Sucesso',
+      values,
+      token
+    );
 
-    toast({
-      title: 'Success',
-      description: 'Account Created Successful.',
-    });
+    if (ok) {
+      toast(message);
+      return router.push('/login');
+    }
 
-    router.push('/login');
+    return toast(message);
   }
 
   return (
@@ -93,20 +102,3 @@ export function CardToRegisterAdmin() {
     </Card>
   );
 }
-
-<form>
-  <div className="grid w-full items-center gap-4">
-    <div className="flex flex-col space-y-1.5">
-      <Label htmlFor="name">Name</Label>
-      <Input id="name" placeholder="Maria Eduarda" />
-    </div>
-    <div className="flex flex-col space-y-1.5">
-      <Label htmlFor="name">Email</Label>
-      <Input id="name" placeholder="mariaeduarda@email.com" />
-    </div>
-    <div className="flex flex-col space-y-1.5">
-      <Label htmlFor="name">Senha</Label>
-      <Input id="name" placeholder="*************" />
-    </div>
-  </div>
-</form>;
