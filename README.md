@@ -15,6 +15,7 @@ Este desafio é projetado para avaliar minhas habilidades em desenvolvimento ful
 - **React Hook Form** para gerenciamento de formulários
 - **Zod** para validação de dados
 - **Componentes de UI do ShadCN**
+- **Autenticação com Cookies** Biblioteca nookies
 
 ## Passo a Passo da Instalação
 

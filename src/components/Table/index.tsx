@@ -19,7 +19,7 @@ import { getToken } from '@/utils/token';
 export function TableDemo() {
   const [allData, setAllData] = useState<Client[]>([]);
   const [clients, setClients] = useState<Client[]>([]);
-  const { search } = useMyContext();
+  const { search, pagination, setPagination } = useMyContext();
   const { toast } = useToast();
   const router = useRouter();
   const token = getToken();
@@ -35,11 +35,16 @@ export function TableDemo() {
         token
       );
 
-      console.log(data);
-
       if (ok) {
         setAllData(data.data);
         setClients(data.data);
+        setPagination({
+          current_page: data.current_page,
+          last_page: data.last_page,
+          next_page_url: data.next_page_url,
+          prev_page_url: data.prev_page_url,
+          links: data.links,
+        });
 
         return toast(message);
       }
