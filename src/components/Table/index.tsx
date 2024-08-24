@@ -14,13 +14,15 @@ import {
 import useMyContext from '@/context/useMyContext';
 import { fetchData } from '@/services/fetchData';
 import { Client } from '@/interfaces/clientInterface';
+import { getToken } from '@/utils/token';
 
 export function TableDemo() {
   const [allData, setAllData] = useState<Client[]>([]);
   const [clients, setClients] = useState<Client[]>([]);
-  const { search, token } = useMyContext();
+  const { search } = useMyContext();
   const { toast } = useToast();
   const router = useRouter();
+  const token = getToken();
 
   useEffect(() => {
     async function loadClients() {

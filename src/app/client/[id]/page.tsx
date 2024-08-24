@@ -9,15 +9,15 @@ import { Modal } from '@/components/Modal';
 import { Card, Client } from '@/interfaces/clientInterface';
 import { clientObject } from '@/utils/clientObject';
 import DeleteClientIcon from '@/assets/delete-client.png';
-import useMyContext from '@/context/useMyContext';
 import { fetchData } from '@/services/fetchData';
+import { getToken } from '@/utils/token';
 
 export default function ShowClient() {
   const [client, setClient] = useState<Client>(clientObject);
   const router = useRouter();
   const params = useParams();
   const { toast } = useToast();
-  const { token } = useMyContext();
+  const token = getToken();
 
   async function handleDeleteClient() {
     const { ok, message } = await fetchData(

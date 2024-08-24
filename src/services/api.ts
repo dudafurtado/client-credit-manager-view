@@ -18,7 +18,6 @@ export async function apiTokenService(
   content?: any
 ) {
   if (method === 'GET' || method === 'DELETE') {
-    console.log('oi');
     return await fetch(`${BASE_URL}${path}`, {
       method,
       headers: {

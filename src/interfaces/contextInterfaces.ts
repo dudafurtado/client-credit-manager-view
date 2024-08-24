@@ -5,8 +5,6 @@ export interface MyContextType {
   setCurrentClientId: (term: number) => void;
   search: string;
   setSearch: (term: string) => void;
-  token: string;
-  setToken: (term: string) => void;
 }
 
 export interface MyProviderProps {

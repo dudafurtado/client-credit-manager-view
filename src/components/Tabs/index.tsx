@@ -22,15 +22,16 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form';
-import { cardSchema } from '@/validations/cardSchema';
-import { fieldsAddress, fieldsCard } from '@/utils/fieldsData';
+import { fieldsAddress } from '@/utils/fieldsData';
 import { addressSchema } from '@/validations/adressSchema';
 import useMyContext from '@/context/useMyContext';
 import { fetchData } from '@/services/fetchData';
+import { getToken } from '@/utils/token';
 
 export function TabsDemo() {
-  const { currentClientId, token } = useMyContext();
+  const { currentClientId } = useMyContext();
   const { toast } = useToast();
+  const token = getToken();
 
   const form = useForm<z.infer<typeof addressSchema>>({
     resolver: zodResolver(addressSchema),

@@ -16,12 +16,11 @@ import { Input } from '@/components/ui/input';
 import { useToast } from '@/components/ui/use-toast';
 import { loginSchema } from '@/validations/adminSchema';
 import { fetchData } from '@/services/fetchData';
-import useMyContext from '@/context/useMyContext';
+import { saveToken } from '@/utils/token';
 
 export function ProfileForm() {
   const router = useRouter();
   const { toast } = useToast();
-  const { setToken } = useMyContext();
 
   const form = useForm<z.infer<typeof loginSchema>>({
     resolver: zodResolver(loginSchema),
@@ -41,9 +40,9 @@ export function ProfileForm() {
     );
 
     if (ok) {
-      setToken(data.token);
+      saveToken(data.token);
       toast(message);
-      router.push('/home');
+      return router.push('/home');
     }
 
     return toast(message);

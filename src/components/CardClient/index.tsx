@@ -26,10 +26,12 @@ import {
 } from '@/components/ui/form';
 import useMyContext from '@/context/useMyContext';
 import { fetchData } from '@/services/fetchData';
+import { getToken } from '@/utils/token';
 
 export function CardToCreateClient() {
-  const { setCurrentClientId, token } = useMyContext();
+  const { setCurrentClientId } = useMyContext();
   const { toast } = useToast();
+  const token = getToken();
 
   const form = useForm<z.infer<typeof createClientSchema>>({
     resolver: zodResolver(createClientSchema),

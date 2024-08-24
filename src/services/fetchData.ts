@@ -20,7 +20,6 @@ export async function fetchData(
     }
 
     if (!res.ok) {
-      console.log('oii');
       const { errors, message } = await res.json();
       const validationError = JSON.stringify(errors, null, 2);
       const apiError = message || `${res.statusText} | ${res.type}`;
@@ -45,7 +44,6 @@ export async function fetchData(
       data,
     };
   } catch (err: unknown) {
-    console.log(err);
     const error = err as ResponseError;
     return {
       ok: false,

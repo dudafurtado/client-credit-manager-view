@@ -28,12 +28,12 @@ import CreditCardIcon from '@/assets/credit-card.png';
 import { cardSchema } from '@/validations/cardSchema';
 import { fieldsCard } from '@/utils/fieldsData';
 import { fetchData } from '@/services/fetchData';
-import useMyContext from '@/context/useMyContext';
+import { getToken } from '@/utils/token';
 
 export function Modal() {
   const params = useParams();
   const { toast } = useToast();
-  const { token } = useMyContext();
+  const token = getToken();
 
   const form = useForm<z.infer<typeof cardSchema>>({
     resolver: zodResolver(cardSchema),
