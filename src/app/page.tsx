@@ -6,7 +6,7 @@ export default function EntrancePage() {
   const router = useRouter();
 
   useEffect(() => {
-    router.push('/new-account');
+    router.push('/login');
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
