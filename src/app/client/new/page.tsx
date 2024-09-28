@@ -1,25 +1,14 @@
 'use client';
 import { BreadcrumbDemo } from '@/components/Breadcrumb';
 import { CardToCreateClient } from '@/components/CardClient';
-import { TabsDemo } from '@/components/Tabs';
-import useMyContext from '@/context/useMyContext';
-import { useEffect } from 'react';
 
 export default function NewClient() {
-  const { currentClientId, setCurrentClientId } = useMyContext();
-
-  useEffect(() => {
-    setCurrentClientId(0);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
   return (
     <>
-      <section className="min-h-screen flex-col justify-center items-center gap-10 p-12">
+      <section className="min-h-screen flex-col justify-center items-center p-12">
         <BreadcrumbDemo url={`/client/new`} title={'Novo Cliente'} />
-        <div className="flex justify-center items-center gap-8 mt-10">
+        <div className="flex justify-center items-center mt-16">
           <CardToCreateClient />
-          <TabsDemo />
         </div>
       </section>
     </>
