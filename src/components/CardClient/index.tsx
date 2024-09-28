@@ -25,8 +25,8 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import useMyContext from '@/context/useMyContext';
-import { fetchData } from '@/services/fetchData';
 import { getToken } from '@/utils/token';
+import { createClient } from '@/services/clientService';
 
 export function CardToCreateClient() {
   const { setCurrentClientId } = useMyContext();
@@ -45,29 +45,22 @@ export function CardToCreateClient() {
   });
 
   async function onSubmit(values: z.infer<typeof createClientSchema>) {
-    const { ok, message, data } = await fetchData(
-      'api',
-      '/clients',
-      'POST',
-      'Cliente Criado Com Sucesso',
-      values,
-      token
-    );
+    const { ok, message, data } = await createClient(values, token);
 
-    if (ok) {
-      toast(message);
-      setCurrentClientId(data.id);
-      return form.reset();
+    if (!ok) {
+      return toast(message);
     }
 
-    return toast(message);
+    toast(message);
+    setCurrentClientId(data.id);
+    form.reset();
   }
 
   return (
     <Card className="w-[350px]">
       <CardHeader>
         <CardTitle>Criar Cliente</CardTitle>
-        <CardDescription>Insira os dados pessoais do seu cliente.</CardDescription>
+        <CardDescription>Preencha os dados do seu cliente.</CardDescription>
       </CardHeader>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">

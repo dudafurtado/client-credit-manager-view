@@ -25,13 +25,11 @@ import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { registerSchema } from '@/validations/adminSchema';
 import { fieldsRegister } from '@/utils/fieldsData';
-import { fetchData } from '@/services/fetchData';
-import useMyContext from '@/context/useMyContext';
+import { createUser } from '@/services/userServices';
 
 export function CardToRegisterAdmin() {
   const router = useRouter();
   const { toast } = useToast();
-  const { token } = useMyContext();
 
   const form = useForm<z.infer<typeof registerSchema>>({
     resolver: zodResolver(registerSchema),
@@ -43,21 +41,14 @@ export function CardToRegisterAdmin() {
   });
 
   async function onSubmit(values: z.infer<typeof registerSchema>) {
-    const { ok, message } = await fetchData(
-      'auth',
-      '/users',
-      'POST',
-      'Administrador Criado Com Sucesso',
-      values,
-      token
-    );
+    const { ok, message } = await createUser(values);
 
-    if (ok) {
-      toast(message);
-      return router.push('/login');
+    if (!ok) {
+      return toast(message);
     }
 
-    return toast(message);
+    toast(message);
+    router.push('/login');
   }
 
   return (
@@ -81,7 +72,11 @@ export function CardToRegisterAdmin() {
                       <FormItem>
                         <FormLabel>{item.label}</FormLabel>
                         <FormControl>
-                          <Input placeholder={item.placeholder} {...field} />
+                          <Input
+                            placeholder={item.placeholder}
+                            {...field}
+                            type={item.type}
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -92,7 +87,7 @@ export function CardToRegisterAdmin() {
             ))}
           </CardContent>
           <CardFooter className="flex justify-between">
-            <Button variant="outline" onClick={() => router.push('/login')}>
+            <Button type="button" variant="outline" onClick={() => router.push('/login')}>
               Login
             </Button>
             <Button type="submit">Criar</Button>
