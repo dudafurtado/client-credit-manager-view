@@ -15,8 +15,8 @@ import {
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/components/ui/use-toast';
 import { loginSchema } from '@/validations/adminSchema';
-import { fetchData } from '@/services/fetchData';
 import { saveToken } from '@/utils/token';
+import { login } from '@/services/userServices';
 
 export function ProfileForm() {
   const router = useRouter();
@@ -31,21 +31,15 @@ export function ProfileForm() {
   });
 
   async function onSubmit(values: z.infer<typeof loginSchema>) {
-    const { ok, message, data } = await fetchData(
-      'auth',
-      '/login',
-      'POST',
-      'Login Efetuado Com Sucesso',
-      values
-    );
+    const { ok, message, data } = await login(values);
 
-    if (ok) {
-      saveToken(data.token);
-      toast(message);
-      return router.push('/home');
+    if (!ok) {
+      return toast(message);
     }
 
-    return toast(message);
+    saveToken(data.token);
+    toast(message);
+    router.push('/home');
   }
 
   return (
@@ -59,7 +53,7 @@ export function ProfileForm() {
               <FormItem>
                 <FormLabel>Email</FormLabel>
                 <FormControl>
-                  <Input placeholder="mariaeduarda@email.com" {...field} />
+                  <Input placeholder="admin@email.com" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -74,14 +68,23 @@ export function ProfileForm() {
               <FormItem>
                 <FormLabel>Senha</FormLabel>
                 <FormControl>
-                  <Input placeholder="**********" {...field} type="password" />
+                  <Input placeholder="********" {...field} type="password" />
                 </FormControl>
                 <FormMessage />
               </FormItem>
             </>
           )}
         />
-        <Button type="submit">Entrar</Button>
+        <section className="flex justify-between">
+          <Button type="submit">Entrar</Button>
+          <Button
+            type="button"
+            variant="outline"
+            onClick={() => router.push('/new-account')}
+          >
+            Criar conta
+          </Button>
+        </section>
       </form>
     </Form>
   );
