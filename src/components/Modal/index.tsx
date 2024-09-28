@@ -24,64 +24,65 @@ import {
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/components/ui/use-toast';
-import CreditCardIcon from '@/assets/credit-card.png';
-import { cardSchema } from '@/validations/cardSchema';
-import { fieldsCard } from '@/utils/fieldsData';
-import { fetchData } from '@/services/fetchData';
+import AddressIcon from '@/assets/address.png';
+import { fieldsAddress, fieldsCard } from '@/utils/fieldsData';
 import { getToken } from '@/utils/token';
+import { createAddress } from '@/services/addressService';
+import { addressSchema } from '@/validations/adressSchema';
 
-export function Modal() {
+export function Modal({ reloadClient, setReloadClient }: any) {
   const params = useParams();
   const { toast } = useToast();
   const token = getToken();
 
-  const form = useForm<z.infer<typeof cardSchema>>({
-    resolver: zodResolver(cardSchema),
+  const form = useForm<z.infer<typeof addressSchema>>({
+    resolver: zodResolver(addressSchema),
     defaultValues: {
-      number: '',
-      expire_date: '',
-      CVV: '',
+      zip_code: '',
+      state: '',
+      city: '',
+      neighborhood: '',
+      street: '',
+      additional_information: '',
     },
   });
 
-  async function onSubmit(values: z.infer<typeof cardSchema>) {
-    const { ok, message } = await fetchData(
-      'api',
-      '/cards',
-      'POST',
-      'Cartão Criado Com Sucesso',
-      { ...values, client_id: params.id },
-      token
-    );
+  async function onSubmit(values: z.infer<typeof addressSchema>) {
+    const { message } = await createAddress(values, token, Number(params.id));
 
-    if (ok) {
-      return toast(message);
-    }
-
-    return toast(message);
+    toast(message);
+    form.reset();
+    setReloadClient(!reloadClient);
+    return;
   }
+
+  function handleCloseModal() {}
 
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>
-        <Image
-          src={CreditCardIcon}
-          alt="Icone de um cartão de crédito"
-          width={40}
-          height={40}
-          className="cursor-pointer self-center"
-        />
+        <Button variant="ghost">
+          <Image
+            src={AddressIcon}
+            alt="Icone de um cartão de crédito"
+            width={30}
+            height={30}
+            className="cursor-pointer self-center mr-4"
+          />
+          Criar Endereço
+        </Button>
       </AlertDialogTrigger>
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>Adicionar Novo Cartão</AlertDialogTitle>
+          <AlertDialogTitle>Adicionar Endereço</AlertDialogTitle>
           <AlertDialogDescription>
-            Use essa área para associar um novo cartão de crédito para esse cliente.
+            Insira o CEP e confirme as informações assim que o complemento for adicionado
+            aos campos.
           </AlertDialogDescription>
         </AlertDialogHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)}>
-            {fieldsCard.map((item) => (
+            {fieldsAddress.map((item) => (
               <div key={item.id} className="py-2">
                 <FormField
                   control={form.control}
@@ -101,7 +102,7 @@ export function Modal() {
               </div>
             ))}
             <AlertDialogFooter className="mt-4">
-              <AlertDialogCancel type="button" onClick={() => form.reset()}>
+              <AlertDialogCancel type="button" onClick={() => handleCloseModal()}>
                 Fechar
               </AlertDialogCancel>
               <Button type="submit">Criar</Button>
