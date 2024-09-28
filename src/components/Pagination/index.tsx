@@ -8,7 +8,7 @@ import {
   PaginationPrevious,
 } from '@/components/ui/pagination';
 import useMyContext from '@/context/useMyContext';
-import { fetchData } from '@/services/fetchData';
+import { paginationClients } from '@/services/clientService';
 import { getToken } from '@/utils/token';
 
 function decodeHtml(html: any) {
@@ -22,16 +22,7 @@ export function PaginationDemo() {
   const token = getToken();
 
   const loadPage = async (url: string) => {
-    const { pathname, search } = new URL(url);
-    let path = `${pathname}${search}`.replace('/api', '');
-    const { ok, data } = await fetchData(
-      'api',
-      path,
-      'GET',
-      'Paginação Feita com Sucesso',
-      '',
-      token
-    );
+    const { ok, data } = await paginationClients(url, token);
 
     if (ok) {
       setPagination({
@@ -39,9 +30,12 @@ export function PaginationDemo() {
         last_page: data.last_page,
         next_page_url: data.next_page_url,
         prev_page_url: data.prev_page_url,
-        links: data.links.map((link: { label: string }) => ({
+        links: data.links.map((link: { label: string | string[] }) => ({
           ...link,
-          label: decodeHtml(link.label.trim()),
+          label:
+            typeof link.label === 'string'
+              ? decodeHtml(link.label.trim())
+              : link.label.map((lbl: string) => decodeHtml(lbl.trim())),
         })),
       });
     }
@@ -73,11 +67,13 @@ export function PaginationDemo() {
         </PaginationItem>
         {pagination.links
           .filter(
-            (link: { label: string | string[] }) =>
-              !link.label.includes('&laquo;') && !link.label.includes('&raquo;')
+            (link: any) =>
+              typeof link.label === 'string' &&
+              !link.label.includes('&laquo;') &&
+              !link.label.includes('&raquo;')
           )
           .map((link: any, index: number) =>
-            link.label.includes('...') ? (
+            typeof link.label === 'string' && link.label.includes('...') ? (
               <PaginationItem key={index}>
                 <PaginationEllipsis />
               </PaginationItem>
@@ -88,7 +84,7 @@ export function PaginationDemo() {
                   isActive={link.active}
                   onClick={(e) => handlePagination(e, link.url)}
                 >
-                  {decodeHtml(link.label)}
+                  {typeof link.label === 'string' ? decodeHtml(link.label) : ''}
                 </PaginationLink>
               </PaginationItem>
             )
