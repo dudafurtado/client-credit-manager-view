@@ -3,6 +3,7 @@ interface FieldRegister {
   name: 'name' | 'email' | 'password';
   label: string;
   placeholder: string;
+  type: string;
 }
 
 interface FieldCreateClient {
@@ -37,19 +38,22 @@ export const fieldsRegister: FieldRegister[] = [
     id: 1,
     name: 'name',
     label: 'Name',
-    placeholder: 'Maria Eduarda',
+    placeholder: 'Adminstrador',
+    type: 'text',
   },
   {
     id: 2,
     name: 'email',
     label: 'Email',
-    placeholder: 'mariaeduarda@email.com',
+    placeholder: 'admin@email.com',
+    type: 'text',
   },
   {
     id: 3,
     name: 'password',
     label: 'Senha',
-    placeholder: '**************',
+    placeholder: '********',
+    type: 'password',
   },
 ];
 
@@ -58,31 +62,31 @@ export const fieldsCreateClient: FieldCreateClient[] = [
     id: 1,
     name: 'name',
     label: 'Name',
-    placeholder: 'Maria Eduarda',
+    placeholder: 'Cliente',
   },
   {
     id: 2,
     name: 'surname',
     label: 'Sobrenome',
-    placeholder: 'Cerqueira Furtado Melo',
+    placeholder: 'Novo',
   },
   {
     id: 3,
     name: 'email',
     label: 'Email',
-    placeholder: 'mariaeduarda@email.com',
+    placeholder: 'cliente@email.com',
   },
   {
     id: 4,
     name: 'birth_date',
     label: 'Data de Nascimento',
-    placeholder: '2003-05-20',
+    placeholder: '2000-10-04',
   },
   {
     id: 5,
     name: 'phone',
     label: 'Telefone',
-    placeholder: '(71) 99951-6225',
+    placeholder: '(75) 99999-0000',
   },
 ];
 
@@ -112,36 +116,36 @@ export const fieldsAddress: FieldAdress[] = [
     id: 1,
     name: 'zip_code',
     label: 'CEP',
-    placeholder: '40080003',
+    placeholder: '72318327',
   },
   {
     id: 2,
     name: 'state',
     label: 'Estado',
-    placeholder: 'Bahia',
+    placeholder: 'DF',
   },
   {
     id: 3,
     name: 'city',
     label: 'Cidade',
-    placeholder: 'Salvador',
+    placeholder: 'Brasília',
   },
   {
     id: 4,
     name: 'neighborhood',
     label: 'Bairro',
-    placeholder: 'Vitória',
+    placeholder: 'Samambaia Norte (Samambaia)',
   },
   {
     id: 5,
     name: 'street',
     label: 'Rua',
-    placeholder: 'Avenida Sete de Setembro',
+    placeholder: 'Quadra QR 408',
   },
   {
     id: 6,
     name: 'additional_information',
     label: 'Complemento',
-    placeholder: 'Número 2613, Edf. Vitória, Apt. 302',
+    placeholder: 'Conjunto 24-A',
   },
 ];
